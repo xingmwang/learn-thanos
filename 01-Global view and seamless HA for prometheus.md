@@ -31,9 +31,8 @@ Let's start this initial Prometheus setup for now.
 
 Now, we will prepare configuration files for all Prometheus instances.First, for the EU Prometheus server that scrapes itself:
 
-prometheus0_eu1.yaml
-
 ```yaml
+cat > prometheus/conf/prometheus0_eu1.yml << EOF
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -45,11 +44,11 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9090']
+EOF
 ```
 
-prometheus0_us1.yaml
-
 ```yaml
+cat > prometheus/conf/prometheus0_us1.yaml << EOF
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -61,11 +60,13 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9091','127.0.0.1:9092']
+EOF
 ```
 
 prometheus1_us1.yaml
 
 ```yaml
+cat > prometheus/conf/prometheus1_us1.yaml << EOF
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -77,6 +78,7 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9091','127.0.0.1:9092']
+EOF
 ```
 
 **NOTE** : Every Prometheus instance must have a globally unique set of identifying labels. These labels are important as they represent certain "stream" of data (e.g in the form of TSDB blocks). Within those exact external labels, the compactions and downsampling are performed, Querier filters its store APIs, further sharding option, deduplication, and potential multi-tenancy capabilities are available. Those are not easy to edit retroactively, so it's important to provide a compatible set of external labels as in order to for Thanos to aggregate data across all the available instances.
