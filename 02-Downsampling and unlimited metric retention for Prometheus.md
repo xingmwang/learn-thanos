@@ -2,7 +2,7 @@
 
 # Step 1 - Initial Prometheus Setup
 
-In this tutorial, we will mimic the usual state with a Prometheus server running for... a year!. We will use it to seamlessly backup all old data in the object storage and configure Prometheus for continuous backup mode, which will allow us to cost-effectively achieve unlimited retention for Prometheus.
+In this tutorial, we will mimic（模拟） the usual state with a Prometheus server running for... a year!. We will use it to seamlessly(无缝的) backup all old data in the object storage and configure Prometheus for continuous backup mode, which will allow us to cost-effectively achieve unlimited retention for Prometheus.
 
 Last but not the least, we will go through setting all up for querying and automated maintenance (e.g compactions, retention and downsampling).
 
@@ -39,8 +39,9 @@ Here, we will prepare configuration files for the Prometheus instance that will 
 
 Click `Copy To Editor` for config to propagate the configs to file.
 
-```
-Copy to Editorglobal:
+```shell
+cat > /vagrant/prometheus/conf/prometheus0_eu1.yml << EOF 
+global:
   scrape_interval: 5s
   external_labels:
     cluster: eu1
@@ -64,6 +65,7 @@ scrape_configs:
   - job_name: 'store_gateway'
     static_configs:
       - targets: ['127.0.0.1:19091']
+EOF
 ```
 
 ## Starting Prometheus Instance
@@ -79,9 +81,9 @@ We also extend Prometheus retention: `--storage.tsdb.retention.time=1000d`. This
 ### Deploying "EU1"
 
 ```
-docker run -d --net=host --rm \
-    -v /root/editor/prometheus0_eu1.yml:/etc/prometheus/prometheus.yml \
-    -v /root/prom-eu1:/prometheus \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus0_eu1.yml:/etc/prometheus/prometheus.yml \
+    -v /vagrant/prometheus/data/prom-eu1:/prometheus \
     -u root \
     --name prometheus-0-eu1 \
     quay.io/prometheus/prometheus:v2.20.0 \
@@ -91,7 +93,7 @@ docker run -d --net=host --rm \
     --storage.tsdb.max-block-duration=2h \
     --storage.tsdb.min-block-duration=2h \
     --web.listen-address=:9090 \
-    --web.external-url=https://2886795300-9090-simba08.environments.katacoda.com \
+    --web.external-url=http://192.168.56.100:9090 \
     --web.enable-lifecycle \
     --web.enable-admin-api
 ```
@@ -100,7 +102,7 @@ docker run -d --net=host --rm \
 
 Once started you should be able to reach the Prometheus instance here and query.. 1 year of data!
 
-- [Prometheus-0 EU1](https://2886795300-9090-simba08.environments.katacoda.com/graph?g0.range_input=1y&g0.expr=continuous_app_metric0&g0.tab=0)
+- [Prometheus-0 EU1](http://192.168.56.100:9090/graph?g0.range_input=1y&g0.expr=continuous_app_metric0&g0.tab=0)
 
 ## Thanos Sidecar & Querier
 
@@ -131,11 +133,11 @@ docker run -d --net=host --rm \
 
 ## Setup verification
 
-Similar to previous course let's check if the Querier works as intended. Let's look on [Querier UI Store page](https://2886795300-9091-simba08.environments.katacoda.com/stores).
+Similar to previous course let's check if the Querier works as intended. Let's look on [Querier UI Store page](http://192.168.56.100:9091/stores).
 
 This should list the sidecar, including the external labels.
 
-On graph you should also see our 5 series for 1y time, thanks to Prometheus and sidecar StoreAPI: [Graph](https://2886795300-9091-simba08.environments.katacoda.com/graph?g0.range_input=1y&g0.max_source_resolution=0s&g0.expr=continuous_app_metric0&g0.tab=0).
+On graph you should also see our 5 series for 1y time, thanks to Prometheus and sidecar StoreAPI: [Graph](http://192.168.56.100:9091//graph?g0.range_input=1y&g0.max_source_resolution=0s&g0.expr=continuous_app_metric0&g0.tab=0).
 
 #### Thanos Sidecars
 
@@ -152,9 +154,9 @@ This is where Thanos comes to play. With a single configuration change we can al
 Let's start simple S3-compatible Minio engine that keeps data in local disk:
 
 ```
-mkdir /root/minio && \
+mkdir /vagrant/minio && \
 docker run -d --rm --name minio \
-     -v /root/minio:/data \
+     -v /vagrant/minio:/data \
      -p 9000:9000 -e "MINIO_ACCESS_KEY=minio" -e "MINIO_SECRET_KEY=melovethanos" \
      minio/minio:RELEASE.2019-01-31T00-31-19Z \
      server /data
@@ -163,12 +165,12 @@ docker run -d --rm --name minio \
 Create `thanos` bucket:
 
 ```
-mkdir /root/minio/thanos
+mkdir /vagrant/minio/thanos
 ```
 
 ## Verification
 
-To check if the Minio is working as intended, let's [open Minio server UI](https://2886795300-9000-simba08.environments.katacoda.com/minio/)
+To check if the Minio is working as intended, let's [open Minio server UI](http://192.168.56.100:9000/minio/)
 
 Enter the credentials as mentioned below:
 
@@ -180,8 +182,9 @@ All Thanos components that use object storage uses the same `objstore.config` fl
 
 Click `Copy To Editor` for config to propagate the configs to the file `bucket_storage.yaml`:
 
-```
-Copy to Editortype: S3
+```shell
+cat > /vagrant/prometheus/conf/bucket_storage.yaml << EOF
+type: S3
 config:
   bucket: "thanos"
   endpoint: "127.0.0.1:9000"
@@ -189,6 +192,7 @@ config:
   signature_version2: true
   access_key: "minio"
   secret_key: "melovethanos"
+EOF
 ```
 
 Let's restart sidecar with updated configuration in backup mode.
@@ -206,8 +210,8 @@ docker stop prometheus-0-eu1-sidecar
 Let's run sidecar:
 
 ```
-docker run -d --net=host --rm \
-    -v /root/editor/bucket_storage.yaml:/etc/thanos/minio-bucket.yaml \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/bucket_storage.yaml:/etc/thanos/minio-bucket.yaml \
     -v /root/prom-eu1:/prometheus \
     --name prometheus-0-eu1-sidecar \
     -u root \
@@ -223,7 +227,7 @@ docker run -d --net=host --rm \
 
 ## Verification
 
-We can check whether the data is uploaded into `thanos` bucket by visitng [Minio](https://2886795300-9000-simba08.environments.katacoda.com/minio/). It will take couple of seconds to synchronize all blocks.
+We can check whether the data is uploaded into `thanos` bucket by visitng [Minio](http://192.168.56.100:9000//minio/). It will take couple of seconds to synchronize all blocks.
 
 Once all blocks appear in the minio `thanos` bucket, we are sure our data is backed up. Awesome!
 
@@ -260,8 +264,8 @@ You can read more about [Store](https://thanos.io/tip/components/store.md/) here
 ### Deploying store for "EU1" Prometheus data
 
 ```
-docker run -d --net=host --rm \
-    -v /root/editor/bucket_storage.yaml:/etc/thanos/minio-bucket.yaml \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/bucket_storage.yaml:/etc/thanos/minio-bucket.yaml \
     --name store-gateway \
     quay.io/thanos/thanos:v0.24.0 \
     store \
@@ -288,11 +292,11 @@ docker run -d --net=host --rm \
    --store 127.0.0.1:19191
 ```
 
-Click on the Querier UI `Graph` page and try querying data for a year or two by inserting metrics `continuous_app_metric0` ([Query UI](https://2886795300-9091-simba08.environments.katacoda.com/graph?g0.range_input=1y&g0.max_source_resolution=0s&g0.expr=continuous_app_metric0&g0.tab=0)). Make sure `deduplication` is selected and you will be able to discover all the data fetched by Thanos store.
+Click on the Querier UI `Graph` page and try querying data for a year or two by inserting metrics `continuous_app_metric0` ([Query UI](http://192.168.56.100:9091/graph?g0.range_input=1y&g0.max_source_resolution=0s&g0.expr=continuous_app_metric0&g0.tab=0)). Make sure `deduplication` is selected and you will be able to discover all the data fetched by Thanos store.
 
 ![img](/Users/xingminwang/data/wayne/virtualhosts/thanos/images/query-graph01.png)
 
-Also, you can check all the active endpoints located by thanos-store by clicking on [Stores](https://2886795300-9091-simba08.environments.katacoda.com/stores).
+Also, you can check all the active endpoints located by thanos-store by clicking on [Stores](http://192.168.56.100:9091/stores). 
 
 ### What we know so far?
 
@@ -306,7 +310,7 @@ The potential duplication of data between Prometheus+sidecar results and store G
 
 Another interesting question here is how to ensure if we query the data from bucket only?
 
-We can check this by visitng the [New UI](https://2886795300-9091-simba08.environments.katacoda.com/new/graph?g0.expr=&g0.tab=0&g0.stacked=0&g0.range_input=1h&g0.max_source_resolution=0s&g0.deduplicate=1&g0.partial_response=0&g0.store_matches=[]), inserting `continuous_app_metric0` metrics again with 1 year time range of graph, and click on `Enable Store Filtering`.
+We can check this by visitng the [New UI](http://192.168.56.100:9091/new/graph?g0.expr=&g0.tab=0&g0.stacked=0&g0.range_input=1h&g0.max_source_resolution=0s&g0.deduplicate=1&g0.partial_response=0&g0.store_matches=[]), inserting `continuous_app_metric0` metrics again with 1 year time range of graph, and click on `Enable Store Filtering`.
 
 This allows us to filter stores and helps in debugging from where we are querying the data exactly.
 
@@ -334,7 +338,7 @@ Before, moving forward, let's take a closer look at what the `Compactor` compone
 
 > Note: Thanos Compactor is currently designed to be run as a singleton. Unavailability (hours) is not problematic as it does not serve any live requests.
 >
-> ## Compactor
+## Compactor
 
 The `Compactor` is an essential component that operates on a single object storage bucket to compact, downsample, apply retention, to the TSDB blocks held inside, thus, making queries on historical data more efficient. It creates aggregates of old metrics (based upon the rules).
 
@@ -349,8 +353,8 @@ If you want to know more about Thanos Compactor, jump [here](https://thanos.io/t
 Click below snippet to start the Compactor.
 
 ```
-docker run -d --net=host --rm \
- -v /root/editor/bucket_storage.yaml:/etc/thanos/minio-bucket.yaml \
+docker run -d --net=host \
+ -v /vagrant/prometheus/conf/bucket_storage.yaml:/etc/thanos/minio-bucket.yaml \
     --name thanos-compact \
     quay.io/thanos/thanos:v0.24.0 \
     compact \
@@ -364,7 +368,7 @@ The flag `wait` is used to make sure all compactions have been processed while `
 
 ## Setup Verification
 
-To check if compactor works fine, we can look at the [Bucket View](https://2886795300-19095-simba08.environments.katacoda.com/new/loaded).
+To check if compactor works fine, we can look at the [Bucket View](http://192.168.56.100:19095/new/loaded).
 
 Now, if we click on the blocks, they will provide us all the metadata (Series, Samples, Resolution, Chunks, and many more things).
 
@@ -376,7 +380,7 @@ Thus, Thanos uses the technique called downsampling (a process of reducing the s
 
 The Compactor applies compaction to the bucket data and also completes the downsampling for historical data.
 
-To expierience this, click on the [Querier](https://2886795300-9091-simba08.environments.katacoda.com/new/graph?g0.expr=&g0.tab=0&g0.stacked=0&g0.range_input=1h&g0.max_source_resolution=0s&g0.deduplicate=1&g0.partial_response=0&g0.store_matches=[]) and insert metrics `continuous_app_metric0` with 1 year time range of graph, and also, click on `Enable Store Filtering`.
+To expierience this, click on the [Querier](http://192.168.56.100:9091/new/graph?g0.expr=&g0.tab=0&g0.stacked=0&g0.range_input=1h&g0.max_source_resolution=0s&g0.deduplicate=1&g0.partial_response=0&g0.store_matches=[]) and insert metrics `continuous_app_metric0` with 1 year time range of graph, and also, click on `Enable Store Filtering`.
 
 Let's try querying `Max 5m downsampling` data, it uses 5m resolution and it will be faster than the raw data. Also, Downsampling is built on top of data, and never done on **young** data.
 

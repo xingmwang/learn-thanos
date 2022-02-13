@@ -48,7 +48,7 @@ EOF
 ```
 
 ```yaml
-cat > prometheus/conf/prometheus0_us1.yaml << EOF
+cat > prometheus/conf/prometheus0_us1.yml << EOF
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -66,7 +66,7 @@ EOF
 prometheus1_us1.yaml
 
 ```yaml
-cat > prometheus/conf/prometheus1_us1.yaml << EOF
+cat > prometheus/conf/prometheus1_us1.yml << EOF
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -97,69 +97,69 @@ Execute following commands:
 ### Prepare "persistent volumes"
 
 ```shell
-$ mkdir -p prometheus0_eu1_data prometheus0_us1_data prometheus1_us1_data
+$ mkdir prometheus/data/{prometheus0_eu1_data,prometheus0_us1_data,prometheus1_us1_data}
 ```
 
 ### Deploying "EU1"
 
 ```shell
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus0_eu1.yml:/etc/prometheus/prometheus.yml \
-    -v $(pwd)/prometheus0_eu1_data:/prometheus \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus0_eu1.yml:/etc/prometheus/prometheus.yml \
+    -v /vagrant/prometheus/data/prometheus0_eu1_data:/prometheus \
     -u root \
     --name prometheus-0-eu1 \
     quay.io/prometheus/prometheus:v2.14.0 \
     --config.file=/etc/prometheus/prometheus.yml \
     --storage.tsdb.path=/prometheus \
     --web.listen-address=:9090 \
-    --web.external-url=https://2886795274-9090-elsy04.environments.katacoda.com \
+    --web.external-url=http://192.168.56.100:9090 \
     --web.enable-lifecycle \
-    --web.enable-admin-api && echo "Prometheus EU1 started!"
+    --web.enable-admin-api && echo "Prometheus EU1 started"
 ```
 
 NOTE: We are using the latest Prometheus image so we can take profit from the latest remote read protocol.
 
 ### Deploying "US1"
 
-```
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus0_us1.yml:/etc/prometheus/prometheus.yml \
-    -v $(pwd)/prometheus0_us1_data:/prometheus \
+```shell
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus0_us1.yml:/etc/prometheus/prometheus.yml \
+    -v /vagrant/prometheus/data/prometheus0_us1_data:/prometheus \
     -u root \
     --name prometheus-0-us1 \
     quay.io/prometheus/prometheus:v2.14.0 \
     --config.file=/etc/prometheus/prometheus.yml \
     --storage.tsdb.path=/prometheus \
     --web.listen-address=:9091 \
-    --web.external-url=https://2886795274-9091-elsy04.environments.katacoda.com \
+    --web.external-url=http://192.168.56.100:9091 \
     --web.enable-lifecycle \
-    --web.enable-admin-api && echo "Prometheus 0 US1 started!"
+    --web.enable-admin-api && echo "Prometheus 0 US1 started"
 ```
 
 and
 
-```
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus1_us1.yml:/etc/prometheus/prometheus.yml \
-    -v $(pwd)/prometheus1_us1_data:/prometheus \
+```shell
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus1_us1.yml:/etc/prometheus/prometheus.yml \
+    -v /vagrant/prometheus/data/prometheus1_us1_data:/prometheus \
     -u root \
     --name prometheus-1-us1 \
     quay.io/prometheus/prometheus:v2.14.0 \
     --config.file=/etc/prometheus/prometheus.yml \
     --storage.tsdb.path=/prometheus \
     --web.listen-address=:9092 \
-    --web.external-url=https://2886795274-9092-elsy04.environments.katacoda.com \
+    --web.external-url=http://192.168.56.100:9092 \
     --web.enable-lifecycle \
-    --web.enable-admin-api && echo "Prometheus 1 US1 started!"
+    --web.enable-admin-api && echo "Prometheus 1 US1 started"
 ```
 
 ## Setup Verification
 
 Once started you should be able to reach all of those Prometheus instances:
 
-- [Prometheus-0 EU1](https://2886795274-9090-elsy04.environments.katacoda.com/)
-- [Prometheus-1 US1](https://2886795274-9091-elsy04.environments.katacoda.com/)
-- [Prometheus-2 US1](https://2886795274-9092-elsy04.environments.katacoda.com/)
+- [Prometheus-0 EU1](http://192.168.56.100:9090)
+- [Prometheus-1 US1](http://192.168.56.100:9091)
+- [Prometheus-2 US1](http://192.168.56.100:9092)
 
 ## Additional info
 
@@ -174,8 +174,6 @@ Why would one need multiple Prometheus instances?
 Let's try to play with this setup a bit. You are free to query any metrics, however, let's try to fetch some certain information from our multi-cluster setup: **How many series (metrics) we collect overall on all Prometheus instances we have?**
 
 Tip: Look for `prometheus_tsdb_head_series` metric.
-
-🕵️‍♂️
 
 Try to get this information from the current setup!
 
@@ -228,7 +226,7 @@ You can read more about sidecar [here](https://thanos.io/tip/components/sidecar.
 
 To allow Thanos to efficiently query Prometheus data, let's install sidecar to each Prometheus instances we deployed in the previous step as shown below:
 
-![sidecar install](/Users/xingminwang/data/wayne/virtualhosts/thanos/images/prometheus-replica01.png)
+![sidecar install](images/prometheus-replica01.png)
 
 For this setup the only configuration required for sidecar is the Prometheus API URL and access to the configuration file. Former will allow us to access Prometheus metrics, the latter will allow sidecar to reload Prometheus configuration in runtime.
 
@@ -236,9 +234,9 @@ Click snippets to add sidecars to each Prometheus instance.
 
 ### Adding sidecar to "EU1" Prometheus
 
-```
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus0_eu1.yml:/etc/prometheus/prometheus.yml \
+```shell
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus0_eu1.yml:/etc/prometheus/prometheus.yml \
     --name prometheus-0-sidecar-eu1 \
     -u root \
     quay.io/thanos/thanos:v0.24.0 \
@@ -251,9 +249,9 @@ docker run -d --net=host --rm \
 
 ### Adding sidecars to each replica of Prometheus in "US1"
 
-```
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus0_us1.yml:/etc/prometheus/prometheus.yml \
+```shell
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus0_us1.yml:/etc/prometheus/prometheus.yml \
     --name prometheus-0-sidecar-us1 \
     -u root \
     quay.io/thanos/thanos:v0.24.0 \
@@ -262,8 +260,8 @@ docker run -d --net=host --rm \
     --grpc-address 0.0.0.0:19191 \
     --reloader.config-file /etc/prometheus/prometheus.yml \
     --prometheus.url http://127.0.0.1:9091 && echo "Started sidecar for Prometheus 0 US1"
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus1_us1.yml:/etc/prometheus/prometheus.yml \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus1_us1.yml:/etc/prometheus/prometheus.yml \
     --name prometheus-1-sidecar-us1 \
     -u root \
     quay.io/thanos/thanos:v0.24.0 \
@@ -282,8 +280,9 @@ As always click `Copy To Editor` for each config to propagate the configs to eac
 
 Note that only thanks to the sidecar, all those changes will be immediately reloaded and updated in Prometheus!
 
-```
-Copy to Editorglobal:
+```yaml
+# prometheus0_eu1.yml
+global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
@@ -297,7 +296,9 @@ scrape_configs:
   - job_name: 'sidecar'
     static_configs:
       - targets: ['127.0.0.1:19090']
-Copy to Editorglobal:
+
+# prometheus0_us1.yml
+global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
@@ -311,7 +312,9 @@ scrape_configs:
   - job_name: 'sidecar'
     static_configs:
       - targets: ['127.0.0.1:19091','127.0.0.1:19092']
-Copy to Editorglobal:
+
+# prometheus1_us1.yml
+global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
@@ -327,7 +330,7 @@ scrape_configs:
       - targets: ['127.0.0.1:19091','127.0.0.1:19092']
 ```
 
-Now you should see new, updated configuration on each Prometheus. For example here in [Prometheus 0 EU1 /config](https://2886795290-9090-frugo01.environments.katacoda.com/config). In the same time [up](https://2886795290-9090-frugo01.environments.katacoda.com/graph?g0.expr=up&g0.tab=1) should show `job=sidecar` metrics.
+Now you should see new, updated configuration on each Prometheus. For example here in [Prometheus 0 EU1 /config](http://192.168.56.100:9090/config). In the same time [up](http://192.168.56.100:9090/graph?g0.expr=up&g0.tab=1) should show `job=sidecar` metrics.
 
 Since now Prometheus has access to sidecar metrics we can query for [thanos_sidecar_prometheus_up](https://2886795290-9090-frugo01.environments.katacoda.com/graph?g0.expr=thanos_sidecar_prometheus_up&g0.tab=1) to check if sidecar has access to Prometheus.
 
@@ -335,7 +338,7 @@ Since now Prometheus has access to sidecar metrics we can query for [thanos_side
 
 Great! Now you should have setup deployed as in the presented image:
 
-![sidecar install](/Users/xingminwang/data/wayne/virtualhosts/thanos/images/prometheus-replica02.png)
+![sidecar install](images/prometheus-replica02.png)
 
 In the next step, we will add a final component allowing us to fetch Prometheus metrics from a single endpoint.
 
@@ -364,7 +367,7 @@ Let's now start the Query component. As you remember [Thanos sidecar](https://th
 Click the snippet below to start the Querier.
 
 ```
-docker run -d --net=host --rm \
+docker run -d --net=host \
     --name querier \
     quay.io/thanos/thanos:v0.24.0 \
     query \
@@ -379,7 +382,7 @@ docker run -d --net=host --rm \
 
 Thanos Querier exposes very similar UI to the Prometheus, but on top of many `StoreAPIs you wish to connect to.
 
-To check if the Querier works as intended let's look on [Querier UI Store page](https://2886795290-29090-frugo01.environments.katacoda.com/stores).
+To check if the Querier works as intended let's look on [Querier UI Store page](http://192.168.56.100:29090/stores).
 
 This should list all our three sidecars, including their external labels.
 
@@ -389,7 +392,7 @@ Now, let's get back to our challenge from step 1, so finding the answer to **How
 
 With the querier this is now super simple.
 
-It's just enough to query Querier for [sum(prometheus_tsdb_head_series)](https://2886795290-29090-frugo01.environments.katacoda.com/graph?g0.range_input=1h&g0.expr=sum(prometheus_tsdb_head_series)&g0.tab=1&g1.range_input=5m&g1.expr=prometheus_tsdb_head_series&g1.tab=0)
+It's just enough to query Querier for [sum(prometheus_tsdb_head_series)](http://192.168.56.100:29090/graph?g0.range_input=1h&g0.expr=sum(prometheus_tsdb_head_series)&g0.tab=1&g1.range_input=5m&g1.expr=prometheus_tsdb_head_series&g1.tab=0)
 
 You should see the single value representing the number of series scraped in both clusters in the current mode.
 
@@ -405,7 +408,7 @@ prometheus_tsdb_head_series{cluster="us1",instance="127.0.0.1:9092",job="prometh
 
 Now, as you remember we configured Prometheus 0 US1 and Prometheus 1 US1 to scrape the same things. We also connect Querier to both, so how Querier knows what is an HA group?
 
-Try to query the same query as before: [prometheus_tsdb_head_series](https://2886795290-29090-frugo01.environments.katacoda.com/graph?g0.range_input=1h&g0.expr=sum(prometheus_tsdb_head_series)&g0.tab=1&g1.range_input=5m&g1.expr=prometheus_tsdb_head_series&g1.tab=0)
+Try to query the same query as before: [prometheus_tsdb_head_series](http://192.168.56.100:29090/graph?g0.range_input=1h&g0.expr=sum(prometheus_tsdb_head_series)&g0.tab=1&g1.range_input=5m&g1.expr=prometheus_tsdb_head_series&g1.tab=0)
 
 Now turn off deduplication (`deduplication` button on Querier UI) and hit `Execute` again. Now you should see 5 results:
 
@@ -421,7 +424,7 @@ So how Thanos Querier knows how to deduplicate correctly?
 
 If we would look again into Querier configuration we can see that we also set `query.replica-label` flag. This is exactly the label Querier will try to deduplicate by for HA groups. This means that any metric with exactly the same labels *except replica label* will be assumed as the metric from the same HA group, and deduplicated accordingly.
 
-If we would open `prometheus1_us1.yml` config file in the editor or if you go to Prometheus 1 US1 [/config](https://2886795290-9090-frugo01.environments.katacoda.com/config). you should see our external labels in `external_labels` YAML option:
+If we would open `prometheus1_us1.yml` config file in the editor or if you go to Prometheus 1 US1 [/config](http://192.168.56.100:29090/config). you should see our external labels in `external_labels` YAML option:
 
 ```yaml
   external_labels:

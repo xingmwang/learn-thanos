@@ -1,0 +1,1026 @@
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1644775200001
+    maxtime: 1644782400000
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1644775200001
+  maxtime: 1644782400000
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1644775200001
+  maxtime: 1644782400000
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1644775200001
+  maxtime: 1644782400000
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1644775200001
+  maxtime: 1644782400000
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1644775200001
+  maxtime: 1644782400000
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1644768000002
+    maxtime: 1644775200001
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1644768000002
+  maxtime: 1644775200001
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1644768000002
+  maxtime: 1644775200001
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1644768000002
+  maxtime: 1644775200001
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1644768000002
+  maxtime: 1644775200001
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1644768000002
+  maxtime: 1644775200001
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1644760800003
+    maxtime: 1644768000002
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1644760800003
+  maxtime: 1644768000002
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1644760800003
+  maxtime: 1644768000002
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1644760800003
+  maxtime: 1644768000002
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1644760800003
+  maxtime: 1644768000002
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1644760800003
+  maxtime: 1644768000002
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1644732000004
+    maxtime: 1644760800003
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1644732000004
+  maxtime: 1644760800003
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1644732000004
+  maxtime: 1644760800003
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1644732000004
+  maxtime: 1644760800003
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1644732000004
+  maxtime: 1644760800003
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1644732000004
+  maxtime: 1644760800003
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1644098400005
+    maxtime: 1644732000004
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1644098400005
+  maxtime: 1644732000004
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1644098400005
+  maxtime: 1644732000004
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1644098400005
+  maxtime: 1644732000004
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1644098400005
+  maxtime: 1644732000004
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1644098400005
+  maxtime: 1644732000004
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1643464800006
+    maxtime: 1644098400005
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1643464800006
+  maxtime: 1644098400005
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1643464800006
+  maxtime: 1644098400005
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1643464800006
+  maxtime: 1644098400005
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1643464800006
+  maxtime: 1644098400005
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1643464800006
+  maxtime: 1644098400005
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1642831200007
+    maxtime: 1643464800006
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1642831200007
+  maxtime: 1643464800006
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1642831200007
+  maxtime: 1643464800006
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1642831200007
+  maxtime: 1643464800006
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1642831200007
+  maxtime: 1643464800006
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1642831200007
+  maxtime: 1643464800006
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1642197600008
+    maxtime: 1642831200007
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1642197600008
+  maxtime: 1642831200007
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1642197600008
+  maxtime: 1642831200007
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1642197600008
+  maxtime: 1642831200007
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1642197600008
+  maxtime: 1642831200007
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1642197600008
+  maxtime: 1642831200007
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1636408800009
+    maxtime: 1642197600008
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1636408800009
+  maxtime: 1642197600008
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1636408800009
+  maxtime: 1642197600008
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1636408800009
+  maxtime: 1642197600008
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1636408800009
+  maxtime: 1642197600008
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1636408800009
+  maxtime: 1642197600008
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1630620000010
+    maxtime: 1636408800009
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1630620000010
+  maxtime: 1636408800009
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1630620000010
+  maxtime: 1636408800009
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1630620000010
+  maxtime: 1636408800009
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1630620000010
+  maxtime: 1636408800009
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1630620000010
+  maxtime: 1636408800009
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1624831200011
+    maxtime: 1630620000010
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1624831200011
+  maxtime: 1630620000010
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1624831200011
+  maxtime: 1630620000010
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1624831200011
+  maxtime: 1630620000010
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1624831200011
+  maxtime: 1630620000010
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1624831200011
+  maxtime: 1630620000010
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1619042400012
+    maxtime: 1624831200011
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1619042400012
+  maxtime: 1624831200011
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1619042400012
+  maxtime: 1624831200011
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1619042400012
+  maxtime: 1624831200011
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1619042400012
+  maxtime: 1624831200011
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1619042400012
+  maxtime: 1624831200011
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+---
+meta:
+  blockmeta:
+    ulid: "00000000000000000000000000"
+    mintime: 1613253600013
+    maxtime: 1619042400012
+    stats:
+      numsamples: 0
+      numseries: 0
+      numchunks: 0
+      numtombstones: 0
+    compaction:
+      level: 1
+      sources: []
+      deletable: false
+      parents: []
+      failed: false
+    version: 1
+  thanos:
+    labels: {}
+    downsample:
+      resolution: 0
+    source: blockgen
+series:
+- labels:
+    __name__: continuous_app_metric0
+  targets: 1
+  type: GAUGE
+  mintime: 1613253600013
+  maxtime: 1619042400012
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric1
+  targets: 1
+  type: GAUGE
+  mintime: 1613253600013
+  maxtime: 1619042400012
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric2
+  targets: 1
+  type: GAUGE
+  mintime: 1613253600013
+  maxtime: 1619042400012
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric3
+  targets: 1
+  type: GAUGE
+  mintime: 1613253600013
+  maxtime: 1619042400012
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07
+- labels:
+    __name__: continuous_app_metric4
+  targets: 1
+  type: GAUGE
+  mintime: 1613253600013
+  maxtime: 1619042400012
+  jitter: 3e+07
+  scrapeInterval: 15s
+  changeInterval: 1h0m0s
+  max: 2e+08
+  min: 1e+07

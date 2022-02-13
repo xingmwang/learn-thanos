@@ -4,6 +4,9 @@
 
 $centos_script = <<-SCRIPT
 
+# set timezone
+timedatectl set-timezone Asia/Shanghai
+
 yum install -y yum-utils
 
 yum-config-manager \

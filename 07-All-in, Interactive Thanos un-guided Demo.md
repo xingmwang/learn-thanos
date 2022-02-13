@@ -9,7 +9,7 @@ Otherwise, have fun with those resources!
 ## Global View + HA: Querier with 1y of data.
 
 ```
-cd /root/editor && CURR_DIR=$(pwd)
+cd /data/editor && CURR_DIR=$(pwd)
 ```
 
 ### Generating data:
@@ -103,9 +103,9 @@ EOF
 PROM_EU1_0_PORT=9091 && \
 PROM_EU1_1_PORT=9092 && \
 PROM_US1_0_PORT=9093
-PROM_EU1_0_EXT_ADDRESS=https://2886795279-${PROM_EU1_0_PORT}-simba11.environments.katacoda.com && \
-PROM_EU1_1_EXT_ADDRESS=https://2886795279-${PROM_EU1_1_PORT}-simba11.environments.katacoda.com && \
-PROM_US1_0_EXT_ADDRESS=https://2886795279-${PROM_US1_0_PORT}-simba11.environments.katacoda.com
+PROM_EU1_0_EXT_ADDRESS=http://192.168.56.100:${PROM_EU1_0_PORT} && \
+PROM_EU1_1_EXT_ADDRESS=http://192.168.56.100:${PROM_EU1_1_PORT} && \
+PROM_US1_0_EXT_ADDRESS=http://192.168.56.100:${PROM_US1_0_PORT}
 ```
 
 ### Deploying Prometheus-es/Prometheus/Prometheus instances
@@ -240,7 +240,7 @@ docker run -d --net=host --rm \
     --store 127.0.0.1:19193
 ```
 
-Visit [https://2886795279-9090-simba11.environments.katacoda.com](https://2886795279-9090-simba11.environments.katacoda.com/) to see Thanos UI.
+Visit [http://192.168.56.100:9090](http://192.168.56.100:9090) to see Thanos UI.
 
 #### Yolo Demo Resources
 
@@ -267,7 +267,7 @@ Create `thanos` bucket:
 mkdir ${CURR_DIR}/minio/thanos
 ```
 
-To check if the Minio is working as intended, let's [open Minio server UI](https://2886795279-9000-simba11.environments.katacoda.com/minio/)
+To check if the Minio is working as intended, let's [open Minio server UI](http://192.168.56.100:9000/minio/)
 
 Enter the credentials as mentioned below:
 
@@ -340,7 +340,7 @@ docker run -d --net=host --rm \
 
 - `cluster="us1", replica="0"` sidecar:
 
-```
+```shell
 docker run -d --net=host --rm \
     -v ${CURR_DIR}/prom-us1-replica0-config.yaml:/etc/prometheus/prometheus.yml \
     -v ${CURR_DIR}/minio-bucket.yaml:/etc/thanos/minio-bucket.yaml \
@@ -358,7 +358,7 @@ docker run -d --net=host --rm \
     --prometheus.url "http://127.0.0.1:${PROM_US1_0_PORT}"
 ```
 
-We can check whether the data is uploaded into `thanos` bucket by visiting [Minio](https://2886795279-9000-simba11.environments.katacoda.com/minio/) (or `localhost:9000`) It will take a minute to synchronize all blocks. Note that sidecar by default uploads only "non compacted by Prometheus" blocks.
+We can check whether the data is uploaded into `thanos` bucket by visiting [Minio](http://192.168.56.100:9090/minio/) (or `localhost:9000`) It will take a minute to synchronize all blocks. Note that sidecar by default uploads only "non compacted by Prometheus" blocks.
 
 See [this](https://thanos.io/tip/components/sidecar.md/#upload-compacted-blocks) to read more about uploading old data already touched by Prometheus.
 
@@ -396,7 +396,7 @@ docker run -d --net=host --rm \
     --store 127.0.0.1:19194
 ```
 
-Visit [https://2886795279-9090-simba11.environments.katacoda.com](https://2886795279-9090-simba11.environments.katacoda.com/) to see Thanos UI.
+Visit [http://192.168.56.100:9090/](http://192.168.56.100:9090/) to see Thanos UI.
 
 ### Long term maintenance, retention, dedup and downsampling:
 
@@ -412,10 +412,10 @@ docker run -d --net=host --rm \
     --http-address 0.0.0.0:19095
 ```
 
-Visit https://2886795279-19095-simba11.environments.katacoda.com/new/loaded to see Compactor Web UI.
+Visit http://192.168.56.100:19095/new/loaded to see Compactor Web UI.
 
 ### Data should be immediately downsampled as well for smooth experience!
 
-Visit [https://2886795279-9090-simba11.environments.katacoda.com](https://2886795279-9090-simba11.environments.katacoda.com/) to see Thanos UI and query for 1 year.
+Visit [http://192.168.56.100:9090](http://192.168.56.100:9090/) to see Thanos UI and query for 1 year.
 
 Check 5m downsampling vs raw data.

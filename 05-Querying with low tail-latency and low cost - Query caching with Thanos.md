@@ -17,8 +17,6 @@ We aim to achieve:
 
 ## Simple observability stack with Prometheus and Thanos
 
-> NOTE: Click `Copy To Editor` for each config to propagate the configs to each file.
-
 Let's imagine we have to deliver centralized metrics platform to multiple teams. For each team we will have a dedicated Prometheus. These could be in the same environment or in different environments (data centers, regions, clusters etc).
 
 And then we will try to provide low cost, fast global overview. Let's see how we achieve that with Thanos.
@@ -32,7 +30,7 @@ Execute following commands to setup Prometheus:
 ### Prepare "persistent volumes" for Prometheuses
 
 ```
-mkdir -p prometheus_data
+mkdir -p /data/prometheus_data
 ```
 
 ### Deploy Prometheus
@@ -45,8 +43,8 @@ Click `Copy To Editor` for each config to propagate the configs to each file.
 
 First, Prometheus server that scrapes itself:
 
-```
-# Prometheus0.yml
+```shell
+cat > /vagrant/prometheus/conf/prometheus0.yml << EOF
 global:
   scrape_interval: 5s
   external_labels:
@@ -57,7 +55,9 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9090']
-# Prometheus1.yml
+EOF
+
+cat > /vagrant/prometheus/conf/prometheus1.yml << EOF
 global:
   scrape_interval: 5s
   external_labels:
@@ -68,8 +68,9 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9091']
+EOF
 
-# Prometheus2.yml
+cat > /vagrant/prometheus/conf/prometheus2.yml << EOF
 global:
   scrape_interval: 5s
   external_labels:
@@ -80,38 +81,26 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9092']
+EOF
 ```
 
 ### Deploy Prometheus
 
-```
+```shell
 for i in $(seq 0 2); do
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus"${i}".yml:/etc/prometheus/prometheus.yml \
-    -v $(pwd)/prometheus_data:/prometheus"${i}" \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus"${i}".yml:/etc/prometheus/prometheus.yml \
+    -v /data/prometheus_data:/prometheus"${i}" \
     -u root \
     --name prometheus"${i}" \
     quay.io/prometheus/prometheus:v2.22.2 \
     --config.file=/etc/prometheus/prometheus.yml \
     --storage.tsdb.path=/prometheus \
     --web.listen-address=:909"${i}" \
-    --web.external-url=https://2886795299-909"${i}"-elsy05.environments.katacoda.com \
+    --web.external-url=http://192.168.56.100:909"${i}" \
     --web.enable-lifecycle \
-    --web.enable-admin-api && echo "Prometheus ${i} started!"
+    --web.enable-admin-api && echo "Prometheus ${i} started"
 done
-
-docker run -d --net=host --rm \
-    -v $(pwd)/prometheus2.yml:/etc/prometheus/prometheus.yml \
-    -v $(pwd)/prometheus_data:/prometheus2 \
-    -u root \
-    --name prometheus2 \
-    quay.io/prometheus/prometheus:v2.22.2 \
-    --config.file=/etc/prometheus/prometheus.yml \
-    --storage.tsdb.path=/prometheus \
-    --web.listen-address=:9092 \
-    --web.external-url=https://2886795299-9092-elsy05.environments.katacoda.com \
-    --web.enable-lifecycle \
-    --web.enable-admin-api && echo "Prometheus 2 started!"
 ```
 
 #### Verify
@@ -127,7 +116,7 @@ docker ps
 ```
 for i in $(seq 0 2); do
 docker run -d --net=host --rm \
-    -v $(pwd)/prometheus"${i}".yml:/etc/prometheus/prometheus.yml \
+    -v /vagrant/prometheus/conf/prometheus"${i}".yml:/etc/prometheus/prometheus.yml \
     --name prometheus-sidecar"${i}" \
     -u root \
     quay.io/thanos/thanos:v0.24.0 \
@@ -135,7 +124,7 @@ docker run -d --net=host --rm \
     --http-address=0.0.0.0:1909"${i}" \
     --grpc-address=0.0.0.0:1919"${i}" \
     --reloader.config-file=/etc/prometheus/prometheus.yml \
-    --prometheus.url=http://127.0.0.1:909"${i}" && echo "Started Thanos Sidecar for Prometheus ${i}!"
+    --prometheus.url=http://127.0.0.1:909"${i}" && echo "Started Thanos Sidecar for Prometheus ${i}"
 done
 ```
 
@@ -163,19 +152,17 @@ docker run -d --net=host --rm \
     --query.replica-label replica \
     --store 127.0.0.1:19190 \
     --store 127.0.0.1:19191 \
-    --store 127.0.0.1:19192 && echo "Started Thanos Querier!"
+    --store 127.0.0.1:19192 && echo "Started Thanos Querier"
 ```
 
 ### Setup Verification
 
 Once started you should be able to reach the Querier and Prometheus.
 
-- [Prometheus](https://2886795299-9090-elsy05.environments.katacoda.com/)
-- [Querier](https://2886795299-10912-elsy05.environments.katacoda.com/)
+- [Prometheus](http://192.168.56.100:9090)
+- [Querier](http://192.168.56.100:10912)
 
 #### Thanos Query Frontend
-
-> NOTE: Click `Copy To Editor` for each config to propagate the configs to each file.
 
 What if we can have one single point of entry in front of Queries instead of separate Queriers? And by doing so slice and dice our queries depend on the time and distribute them between queriers to balance the load? Moreover, why not cache these responses so that next time someone asks for the same time range we can just serve it from memory. Wouldn't it be faster?
 
@@ -187,8 +174,8 @@ We are running this tutorial on a single machine in this setup, as a result it's
 
 For that let's setup a nginx instance:
 
-```
-# nginx.conf
+```shell
+cat > /vagrant/prometheus/conf/nginx.conf << EOF
 server {
  listen 10902;
  server_name proxy;
@@ -203,12 +190,13 @@ server {
      proxy_pass http://127.0.0.1:10912;
  }
 }
+EOF
 
 
 docker run -d --net=host --rm \
-    -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf \
+    -v /vagrant/prometheus/conf/nginx.conf:/etc/nginx/conf.d/default.conf \
     --name nginx \
-    yannrobert/docker-nginx && echo "Started Querier Proxy!"
+    yannrobert/docker-nginx && echo "Started Querier Proxy"
 ```
 
 ### Verify
@@ -224,20 +212,20 @@ docker ps
 First, let's create necessary cache configuration for Frontend:
 
 ```
-# frontend.yml
-
+cat > /vagrant/prometheus/conf/frontend.yml << EOF
 type: IN-MEMORY
 config:
   max_size: "0"
   max_size_items: 2048
   validity: "6h"
+EOF
 ```
 
 And deploy Query Frontend:
 
 ```
-docker run -d --net=host --rm \
-    -v $(pwd)/frontend.yml:/etc/thanos/frontend.yml \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/frontend.yml:/etc/thanos/frontend.yml \
     --name query-frontend \
     quay.io/thanos/thanos:v0.24.0 \
     query-frontend \
@@ -249,18 +237,18 @@ docker run -d --net=host --rm \
     --query-range.response-cache-max-freshness=1m \
     --query-range.max-retries-per-request=5 \
     --query-range.response-cache-config-file=/etc/thanos/frontend.yml \
-    --cache-compression-type="snappy" && echo "Started Thanos Query Frontend!"
+    --cache-compression-type="snappy" && echo "Started Thanos Query Frontend"
 ```
 
 ### Setup Verification
 
 Once started you should be able to reach the Querier, Query Frontend and Prometheus.
 
-- [Prometheus](https://2886795299-9090-elsy05.environments.katacoda.com/)
-- [Querier](https://2886795299-10902-elsy05.environments.katacoda.com/)
-- [Query Frontend](https://2886795299-20902-elsy05.environments.katacoda.com/)
+- [Prometheus](http://192.168.56.100:9090)
+- [Querier](http://192.168.56.100:10912)
+- [Query Frontend](http://192.168.56.100:20902)
 
-Now, go and execute a query on [Querier](https://2886795299-10902-elsy05.environments.katacoda.com/) and observe the latency. And then go and execute the same query on [Query Frontend](https://2886795299-20902-elsy05.environments.katacoda.com/). For the first execution you will observe that the query execution takes longer than the query on Querier. That's because we have an nginx proxy between Query Frontend and Querier.
+Now, go and execute a query on [Querier](http://192.168.56.100:10912) and observe the latency. And then go and execute the same query on [Query Frontend](http://192.168.56.100:20902/). For the first execution you will observe that the query execution takes longer than the query on Querier. That's because we have an nginx proxy between Query Frontend and Querier.
 
 Now if you execute the same query again on Query Frontend for the same time frame using time selector in graph section in the UI (time is always shifting). See that it's much faster? It's taking much less time because we are just serving the response from the cached results.
 

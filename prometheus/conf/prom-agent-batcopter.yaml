@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s
+  external_labels:
+    cluster: batcopter
+    replica: 0
+
+scrape_configs:
+  - job_name: 'prometheus-agent'
+    static_configs:
+      - targets: ['127.0.0.1:9091']
+
+remote_write:
+- url: 'http://127.0.0.1:10908/api/v1/receive'

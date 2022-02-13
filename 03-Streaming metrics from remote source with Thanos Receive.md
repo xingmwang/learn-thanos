@@ -33,8 +33,9 @@ Firstly, let us setup two Prometheus instances...
 
 Let's use a very simple configuration file, that tells prometheus to scrape its own metrics page every 5 seconds.
 
-```
-Copy to Editorglobal:
+```shell
+cat > /vagrant/prometheus/conf/prometheus-batcave.yaml << EOF
+global:
   scrape_interval: 5s
   external_labels:
     cluster: batcave
@@ -44,25 +45,26 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9090']
+EOF
 ```
 
 Run the prometheus instance:
 
 ```
-docker run -d --net=host --rm \
-    -v /root/editor/prometheus-batcave.yaml:/etc/prometheus/prometheus.yaml \
-    -v /root/prometheus-batcave-data:/prometheus \
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus-batcave.yaml:/etc/prometheus/prometheus.yaml \
+    -v /data/prometheus-batcave-data:/prometheus \
     -u root \
     --name prometheus-batcave \
     quay.io/prometheus/prometheus:v2.27.0 \
     --config.file=/etc/prometheus/prometheus.yaml \
     --storage.tsdb.path=/prometheus \
     --web.listen-address=:9090 \
-    --web.external-url=https://2886795272-9090-kitek05.environments.katacoda.com \
+    --web.external-url=http://192.168.56.100:9090 \
     --web.enable-lifecycle
 ```
 
-Verify that `prometheus-batcave` is running by navigating to the [Batcave Prometheus UI](https://2886795272-9090-kitek05.environments.katacoda.com/).
+Verify that `prometheus-batcave` is running by navigating to the [Batcave Prometheus UI](http://192.168.56.100:9090).
 
 Why do we enable the web lifecycle flag?
 
@@ -72,8 +74,9 @@ By specifying `--web.enable-lifecycle`, we tell Prometheus to expose the `/-/rel
 
 Almost exactly the same configuration as above, except we run the Prometheus instance on port `9091`.
 
-```
-Copy to Editorglobal:
+```shell
+cat > /vagrant/prometheus/conf/prometheus-batcomputer.yaml << EOF
+global:
   scrape_interval: 5s
   external_labels:
     cluster: batcomputer
@@ -83,24 +86,24 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['127.0.0.1:9091']
-docker run -d --net=host --rm \
-    -v /root/editor/prometheus-batcomputer.yaml:/etc/prometheus/prometheus.yaml \
-    -v /root/prometheus-batcomputer:/prometheus \
+EOF
+
+docker run -d --net=host \
+    -v /vagrant/prometheus/conf/prometheus-batcomputer.yaml:/etc/prometheus/prometheus.yaml \
+    -v /data/prometheus-batcomputer:/prometheus \
     -u root \
     --name prometheus-batcomputer \
     quay.io/prometheus/prometheus:v2.27.0 \
     --config.file=/etc/prometheus/prometheus.yaml \
     --storage.tsdb.path=/prometheus \
     --web.listen-address=:9091 \
-    --web.external-url=https://2886795291-9091-elsy05.environments.katacoda.com \
+    --web.external-url=http://192.168.56.100:9091 \
     --web.enable-lifecycle
 ```
 
-Verify that `prometheus-batcomputer` is running by navigating to the [Batcomputer Prometheus UI](https://2886795272-9091-kitek05.environments.katacoda.com/).
+Verify that `prometheus-batcomputer` is running by navigating to the [Batcomputer Prometheus UI](/).
 
 With these Prometheus instances configured and running, we can now start to architect our global view of all of `Wayne Enterprises`.
-
-
 
 #### Setup Thanos Receive
 
@@ -143,8 +146,8 @@ In its simplest form, when `Thanos Receive` receives data from Prometheus, it st
 The first component we will run in our new architecture is `Thanos Receive`:
 
 ```
-docker run -d --rm \
-    -v $(pwd)/receive-data:/receive/data \
+docker run -d \
+    -v /data/receive-data:/receive/data \
     --net=host \
     --name receive \
     quay.io/thanos/thanos:v0.21.0 \
@@ -211,7 +214,8 @@ We need to tell `prometheus-batcave` & `prometheus-batcomputer` where to write t
 The docs for this configuration option can be found [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
 
 ```
-Copy to Editorglobal:
+# /vagrant/prometheus/conf/prometheus-batcave.yaml
+global:
   scrape_interval: 5s
   external_labels:
     cluster: batcave
@@ -223,7 +227,9 @@ scrape_configs:
       - targets: ['127.0.0.1:9090']
 remote_write:
 - url: 'http://127.0.0.1:10908/api/v1/receive'
-Copy to Editorglobal:
+
+# /vagrant/prometheus/conf/prometheus-batcomputer.yaml
+global:
   scrape_interval: 5s
   external_labels:
     cluster: batcomputer
@@ -248,8 +254,8 @@ curl -X POST http://127.0.0.1:9091/-/reload
 
 Verify this has taken affect by checking the `/config` page on our Prometheus instances:
 
-- `prometheus-batcave` [config page](https://2886795294-9090-ollie09.environments.katacoda.com/config)
-- `prometheus-batcomputer` [config page](https://2886795294-9091-ollie09.environments.katacoda.com/config)
+- `prometheus-batcave` [config page](http://192.168.56.100:9090/config)
+- `prometheus-batcomputer` [config page](http://192.168.56.100:9091/config)
 
 In both cases you should see the `remote_write` options in the configuration
 

@@ -41,8 +41,8 @@ As you might remember from the previous tutorial, in the simplest form for strea
 Let's run `Thanos Receive`:
 
 ```
-docker run -d --rm \
-    -v $(pwd)/receive-data:/receive/data \
+docker run -d  \
+    -v /data/receive-data:/receive/data \
     --net=host \
     --name receive \
     quay.io/thanos/thanos:v0.21.0 \
@@ -69,7 +69,7 @@ query \
 --store "127.0.0.1:10907"
 ```
 
-Verify that `Thanos Query` is working and configured correctly by looking at the 'stores' tab [here](https://2886795284-39090-jago02.environments.katacoda.com/stores) (try refreshing the Thanos UI if it does not show up straight away).
+Verify that `Thanos Query` is working and configured correctly by looking at the 'stores' tab [here](http://192.168.56.100:39090/stores) (try refreshing the Thanos UI if it does not show up straight away).
 
 We should see Receive store on this page and, as expected, no metric data since we did not connect any Remote Write sender yet.
 
@@ -108,6 +108,7 @@ Let's try to deploy it to fulfil `batmobile` and `batcopter` monitoring requirem
 Let's use a very simple configuration file that tells prometheus agent to scrape its own metrics page every 5 seconds and forwards it's to our running `Thanos Receive`.
 
 ```
+cat > /vagrant/prometheus/conf/prom-agent-batmobile.yaml << EOF
 global:
   scrape_interval: 5s
   external_labels:
@@ -121,14 +122,15 @@ scrape_configs:
 
 remote_write:
 - url: 'http://127.0.0.1:10908/api/v1/receive'
+EOF
 ```
 
 Run the prometheus in agent mode:
 
 ```
-docker run -d --net=host --rm \
--v /root/editor/prom-agent-batmobile.yaml:/etc/prometheus/prometheus.yaml \
--v /root/prom-batmobile-data:/prometheus \
+docker run -d --net=host \
+-v /vagrant/prometheus/conf/prom-agent-batmobile.yaml:/etc/prometheus/prometheus.yaml \
+-v /data/prom-batmobile-data:/prometheus \
 -u root \
 --name prom-agent-batmobile \
 quay.io/prometheus/prometheus:v2.32.0-beta.0 \
@@ -140,7 +142,7 @@ quay.io/prometheus/prometheus:v2.32.0-beta.0 \
 
 This runs Prometheus Agent, which will scrape itself and forward all to Thanos Receive. It also exposes UI with pages that relate to scraping, service discovery, configuration and build information.
 
-Verify that `prom-agent-batmobile` is running by navigating to the [Batmobile Prometheus Agent UI](https://2886795284-9090-jago02.environments.katacoda.com/targets).
+Verify that `prom-agent-batmobile` is running by navigating to the [Batmobile Prometheus Agent UI](http://192.168.56.100:9090/targets).
 
 You should see one target: Prometheus Agent on `batmobile` itself.
 
@@ -149,7 +151,8 @@ You should see one target: Prometheus Agent on `batmobile` itself.
 Similarly, we can configure and deploy the second agent:
 
 ```
-Copy to Editorglobal:
+cat > /vagrant/prometheus/conf/prom-agent-batcopter.yaml << EOF
+global:
   scrape_interval: 5s
   external_labels:
     cluster: batcopter
@@ -162,9 +165,11 @@ scrape_configs:
 
 remote_write:
 - url: 'http://127.0.0.1:10908/api/v1/receive'
-docker run -d --net=host --rm \
--v /root/editor/prom-agent-batcopter.yaml:/etc/prometheus/prometheus.yaml \
--v /root/prom-batcopter-data:/prometheus \
+EOF
+
+docker run -d --net=host \
+-v /vagrant/prometheus/conf/prom-agent-batcopter.yaml:/etc/prometheus/prometheus.yaml \
+-v /data/prom-batcopter-data:/prometheus \
 -u root \
 --name prom-agent-batcopter \
 quay.io/prometheus/prometheus:v2.32.0-beta.0 \
@@ -174,7 +179,7 @@ quay.io/prometheus/prometheus:v2.32.0-beta.0 \
 --web.listen-address=:9091
 ```
 
-Verify that `prom-agent-batcopter` is running by navigating to the [Batcopter Prometheus Agent UI](https://2886795284-9091-jago02.environments.katacoda.com/targets).
+Verify that `prom-agent-batcopter` is running by navigating to the [Batcopter Prometheus Agent UI](http://192.168.56.100:9091/targets).
 
 You should see one target: Prometheus Agent on `batcopter` itself.
 
@@ -192,4 +197,4 @@ The final task on our list is to verify that data is flowing correctly.
 
 Stop and think how you could do this before opening the answer below 👇
 
-<details open="" style="box-sizing: inherit; display: block;"><summary style="box-sizing: inherit; display: list-item;">How are we going to check that the components are wired up correctly?</summary>Let's make sure that we can query data from each of our Prometheus instances from our<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">Thanos Query</code><span>&nbsp;</span>instance. Navigate to the<span>&nbsp;</span><a href="https://2886795284-39090-jago02.environments.katacoda.com/" rel="nofollow" target="_blank" style="box-sizing: inherit; background-color: transparent; color: rgb(3, 155, 229); text-decoration: none; -webkit-tap-highlight-color: transparent;">Thanos Query UI</a>, and query for a metric like<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">up</code><span>&nbsp;</span>or<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">go_goroutines</code><span>&nbsp;</span>- inspect the output and you should see<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">batmobile</code><span>&nbsp;</span>and<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">batcopter</code><span>&nbsp;</span>in the<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">cluster</code><span>&nbsp;</span>label.<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">go_goroutines</code><span>&nbsp;</span>should look something like on image below:<span>&nbsp;</span><img src="https://www.katacoda.com/thanos/courses/thanos/4-receiver-agent/assets/expected.png" alt="expected" data-featherlight="https://www.katacoda.com/thanos/courses/thanos/4-receiver-agent/assets/expected.png" style="box-sizing: inherit; border-style: none; cursor: zoom-in; max-width: 100%;"></details>
+<details open="" style="box-sizing: inherit; display: block;"><summary style="box-sizing: inherit; display: list-item;">How are we going to check that the components are wired up correctly?</summary>Let's make sure that we can query data from each of our Prometheus instances from our<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">Thanos Query</code><span>&nbsp;</span>instance. Navigate to the<span>&nbsp;</span><a href="http://192.168.56.100:9090/" rel="nofollow" target="_blank" style="box-sizing: inherit; background-color: transparent; color: rgb(3, 155, 229); text-decoration: none; -webkit-tap-highlight-color: transparent;">Thanos Query UI</a>, and query for a metric like<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">up</code><span>&nbsp;</span>or<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">go_goroutines</code><span>&nbsp;</span>- inspect the output and you should see<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">batmobile</code><span>&nbsp;</span>and<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">batcopter</code><span>&nbsp;</span>in the<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">cluster</code><span>&nbsp;</span>label.<span>&nbsp;</span><code style="box-sizing: inherit; font-family: SFMono-Regular, Consolas, &quot;Liberation Mono&quot;, Menlo, Courier, monospace; font-size: 14.85px; color: rgb(0, 0, 0); background: rgb(245, 242, 240); padding: 2px 5px; display: inline-block; white-space: pre-wrap;">go_goroutines</code><span>&nbsp;</span>should look something like on image below:<span>&nbsp;</span><img src="https://www.katacoda.com/thanos/courses/thanos/4-receiver-agent/assets/expected.png" alt="expected" data-featherlight="https://www.katacoda.com/thanos/courses/thanos/4-receiver-agent/assets/expected.png" style="box-sizing: inherit; border-style: none; cursor: zoom-in; max-width: 100%;"></details>

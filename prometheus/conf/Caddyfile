@@ -1,0 +1,13 @@
+{
+    admin off
+}
+
+:39091  {
+    rewrite * ?{query}&tenant=team-fruit
+    reverse_proxy 127.0.0.1:39090
+}
+
+:39092 {
+    rewrite * ?{query}&tenant=team-veggie
+    reverse_proxy 127.0.0.1:39090
+}
